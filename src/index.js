@@ -78,41 +78,57 @@ async function startApp(provider) {
   }
 }
 
-// outputs the current value of the counter
-async function callContract() {
-  const abi = await fetchAbi();
-  //console.log(abi);
-  const w3 = new Web3("https://coston2-api.flare.network/ext/C/rpc");
-  const cnt = new w3.eth.Contract(abi, "0x24A99A6dcFC3332443037C5a09505731312fD154");
-  const myAddress = localStorage.getItem("acc");
-  //console.log(myAddress);
-  const res = await cnt.methods.fetch().call();
-  console.log("Counter: ", res);
-  document.getElementById("res").innerHTML = `
-    Result:
-    <br/>
-    `.concat(res.toString()).concat(`
-  `);
-
-}
-window.callContract = callContract;
-
-
-// increments the counter by 1
-async function updateCounter() {
+async function getFutures() {
   const web3 = new Web3(window.ethereum);
   const abiInstance = ABI.abi;
   const contract = new web3.eth.Contract(
                                     abiInstance,
-                     "0x24A99A6dcFC3332443037C5a09505731312fD154");
-  
+                     "0x1155A9743961c8e3DC2bdF192CCc99D526020A84");
+
   const myAddress = localStorage.getItem("acc");
   try {
-    const res = await contract.methods.increment().send({from: myAddress});
+    var res1 = await contract.methods.fetchFutureSenders().call({from: myAddress});
+    var res2 = await contract.methods.fetchFutureAmounts().call({from: myAddress});
+    var res3 = await contract.methods.fetchFutureMaturities().call({from: myAddress});
+    var res4 = await contract.methods.fetchFutureMessages().call({from: myAddress});
+    var i = 0;
+    if ((res1.length != res3.length) || (res1.length != res2.length) || (res3.length != res4.length)){
+      throw "data corruption error";
+      return;
+    }
+    var arr = [];
+    while (i < res1.length){
+      arr.push([res1[i], res2[i], res3[i], res4[i]]);
+      i++;
+    }
+    console.log(arr);
+  }
+  catch (err){
+    console.log(err);
+  }
+
+
+}
+window.getFutures = getFutures;
+
+
+// increments the counter by 1
+async function createCapsule() {
+  const web3 = new Web3(window.ethereum);
+  const abiInstance = ABI.abi;
+  const contract = new web3.eth.Contract(
+                                    abiInstance,
+                     "0x1155A9743961c8e3DC2bdF192CCc99D526020A84");
+  
+  const myAddress = localStorage.getItem("acc");
+  const pay = web3.utils.toWei('0.01', 'ether');
+  const factor = 3;
+  try {
+    const res = await contract.methods.storeAmount("0xD0dC8A261Ad1B75A92C5e502AE10c3Fde042b879", 3, factor, "welcome").send({from: myAddress, value: factor * pay, gas: 100000, gasLimit: 1000000});
     document.getElementById("res").innerHTML = `
     Result:
     <br/>
-    `.concat('Counter has been incremented').concat(`
+    `.concat('New Capsule Created!').concat(`
   `);
   }
   catch (err){
@@ -128,7 +144,7 @@ async function updateCounter() {
 
 
 }
-window.updateCounter = updateCounter;
+window.createCapsule = createCapsule;
 
 
 // resets the counter to 0, but requires a payment of 0.01 C2FLR to do so (excluding gas)
@@ -140,7 +156,7 @@ async function resetCounter() {
   //const abiInstance = ABI.abi;
   const contract = new web3.eth.Contract(
                                     abiInstance,
-                     "0x24A99A6dcFC3332443037C5a09505731312fD154");
+                     "0x1155A9743961c8e3DC2bdF192CCc99D526020A84");
 
 
   const hundredth_eth = BigInt(10000000000000000);
