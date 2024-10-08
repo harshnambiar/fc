@@ -83,7 +83,7 @@ async function getFutures() {
   const abiInstance = ABI.abi;
   const contract = new web3.eth.Contract(
                                     abiInstance,
-                     "0x1155A9743961c8e3DC2bdF192CCc99D526020A84");
+                     "0xd724613c90224c502D4b2cD5742F56681039edaB");
 
   const myAddress = localStorage.getItem("acc");
   try {
@@ -118,7 +118,7 @@ async function createCapsule() {
   const abiInstance = ABI.abi;
   const contract = new web3.eth.Contract(
                                     abiInstance,
-                     "0x1155A9743961c8e3DC2bdF192CCc99D526020A84");
+                     "0xd724613c90224c502D4b2cD5742F56681039edaB");
   
   const myAddress = localStorage.getItem("acc");
   const pay = web3.utils.toWei('0.01', 'ether');
@@ -148,28 +148,25 @@ window.createCapsule = createCapsule;
 
 
 // resets the counter to 0, but requires a payment of 0.01 C2FLR to do so (excluding gas)
-async function resetCounter() {
+async function distributeCapsules() {
   const web3 = new Web3(window.ethereum);
-  const abiInstance = await fetchAbi();
-  console.log(abiInstance);
+  const abiInstance = ABI.abi;
     const myAddress = localStorage.getItem("acc");
   //const abiInstance = ABI.abi;
   const contract = new web3.eth.Contract(
                                     abiInstance,
-                     "0x1155A9743961c8e3DC2bdF192CCc99D526020A84");
+                     "0xd724613c90224c502D4b2cD5742F56681039edaB");
 
 
-  const hundredth_eth = BigInt(10000000000000000);
-  const pay = web3.utils.toWei('0.01', 'ether');
+  //const hundredth_eth = BigInt(10000000000000000);
+  //const pay = web3.utils.toWei('0.01', 'ether');
   try {
-
-    console.log(hundredth_eth);
-    const res3 = await contract.methods.reset_count()
-                .send({from: myAddress, value: pay});
+    const res3 = await contract.methods.distribute()
+                .send({from: myAddress, gas: 100000, gasLimit: 1000000});
                 document.getElementById("res").innerHTML = `
     Result:
     <br/>
-    `.concat('Counter has been reset!').concat(`
+    `.concat('Todays maturing capsules distributed!!').concat(`
   `);
   }
   catch (err){
@@ -182,7 +179,7 @@ async function resetCounter() {
   }
 
 }
-window.resetCounter = resetCounter;
+window.distributeCapsules = distributeCapsules;
 
 
 // fetches a registered smart contract ABI from the flare explorer
