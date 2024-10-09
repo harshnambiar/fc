@@ -122,9 +122,9 @@ async function createCapsule() {
   
   const myAddress = localStorage.getItem("acc");
   const pay = web3.utils.toWei('0.01', 'ether');
-  const factor = 3;
+  const factor = 2;
   try {
-    const res = await contract.methods.storeAmount("0xD0dC8A261Ad1B75A92C5e502AE10c3Fde042b879", 3, factor, "welcome").send({from: myAddress, value: factor * pay, gas: 100000, gasLimit: 1000000});
+    const res = await contract.methods.storeAmount("0xD0dC8A261Ad1B75A92C5e502AE10c3Fde042b879", 4, factor, "welcome").send({from: myAddress, value: factor * pay, gas: 100000, gasLimit: 1000000});
     document.getElementById("res").innerHTML = `
     Result:
     <br/>
@@ -181,6 +181,90 @@ async function distributeCapsules() {
 }
 window.distributeCapsules = distributeCapsules;
 
+
+async function to_about(){
+  window.location.href = "./about.html";
+}
+window.to_about = to_about;
+
+async function to_home(){
+  window.location.href = "./";
+}
+window.to_home = to_home;
+
+async function to_capsules(){
+  window.location.href = "./capsules.html";
+}
+window.to_capsules = to_capsules;
+
+async function load_capsules(){
+  const web3 = new Web3(window.ethereum);
+  const abiInstance = ABI.abi;
+  const contract = new web3.eth.Contract(
+                                    abiInstance,
+                     "0xd724613c90224c502D4b2cD5742F56681039edaB");
+
+  const myAddress = localStorage.getItem("acc");
+  var arr = [];
+
+  try {
+    var res1 = await contract.methods.fetchFutureSenders().call({from: myAddress});
+    var res2 = await contract.methods.fetchFutureAmounts().call({from: myAddress});
+    var res3 = await contract.methods.fetchFutureMaturities().call({from: myAddress});
+    var res4 = await contract.methods.fetchFutureMessages().call({from: myAddress});
+    var i = 0;
+    if ((res1.length != res3.length) || (res1.length != res2.length) || (res3.length != res4.length)){
+      throw "data corruption error";
+      return;
+    }
+
+    while (i < res1.length){
+      arr.push([res1[i], res2[i], res3[i], res4[i]]);
+      i++;
+    }
+
+  }
+  catch (err){
+    console.log(err);
+    return;
+  }
+
+  const dnow = Math.floor(Date.now() / (60*60*24*1000));
+  var el = document.getElementById("cap_cont");
+
+
+  var j = 0;
+  while (j < arr.length){
+    var el = document.getElementById("cap_cont");
+    var tleft = (parseInt(arr[j][2]) - dnow).toString();
+    var val = arr[j][0].concat(" ").concat(arr[j][1]).concat(" ").concat(tleft.concat(" days")).concat(" ").concat(arr[j][3]);
+    if (j % 2 == 0){
+      el.innerHTML = el.innerHTML + `
+      <tr style="background-color: black;color: #ff8c00;">
+          <td>`.concat(arr[j][0]).concat(`</td>
+          <td>`.concat(arr[j][1]).concat(`</td>
+          <td>`.concat(tleft.concat(" days")).concat(`</td>
+          <td>`.concat(arr[j][3]).concat(`</td>
+        </tr>`))));
+    }
+    else {
+      el.innerHTML = el.innerHTML + `
+      <tr style="color: black;background-color: #ff8c00;">
+          <td>`.concat(arr[j][0]).concat(`</td>
+          <td>`.concat(arr[j][1]).concat(`</td>
+          <td>`.concat(tleft.concat(" days")).concat(`</td>
+          <td>`.concat(arr[j][3]).concat(`</td>
+        </tr>`))));
+    }
+
+    j++;
+  }
+
+
+  console.log(dnow);
+
+}
+window.load_capsules = load_capsules;
 
 // fetches a registered smart contract ABI from the flare explorer
 // doesn't require a metamask connection
