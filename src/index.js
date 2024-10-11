@@ -83,7 +83,7 @@ async function getFutures() {
   const abiInstance = ABI.abi;
   const contract = new web3.eth.Contract(
                                     abiInstance,
-                     "0xd724613c90224c502D4b2cD5742F56681039edaB");
+                     "0xaAAcF0A44cfe45ad7eE80a39597A98184D611b62");
 
   const myAddress = localStorage.getItem("acc");
   try {
@@ -118,13 +118,13 @@ async function createCapsule() {
   const abiInstance = ABI.abi;
   const contract = new web3.eth.Contract(
                                     abiInstance,
-                     "0xd724613c90224c502D4b2cD5742F56681039edaB");
+                     "0xaAAcF0A44cfe45ad7eE80a39597A98184D611b62");
   
   const myAddress = localStorage.getItem("acc");
   const pay = web3.utils.toWei('0.01', 'ether');
-  const factor = 5;
+  const factor = 2;
   try {
-    const res = await contract.methods.storeAmount("0xD0dC8A261Ad1B75A92C5e502AE10c3Fde042b879", 9, factor, "sort test").send({from: myAddress, value: factor * pay, gas: 100000, gasLimit: 1000000});
+    const res = await contract.methods.storeAmount("0xB1dfA879a8273bC25946AA14598cB96BFEce2D49", 2, factor, "1st").send({from: myAddress, value: factor * pay, gas: 100000, gasLimit: 1000000});
     document.getElementById("res").innerHTML = `
     Result:
     <br/>
@@ -155,7 +155,7 @@ async function distributeCapsules() {
   //const abiInstance = ABI.abi;
   const contract = new web3.eth.Contract(
                                     abiInstance,
-                     "0xd724613c90224c502D4b2cD5742F56681039edaB");
+                     "0xaAAcF0A44cfe45ad7eE80a39597A98184D611b62");
 
 
   //const hundredth_eth = BigInt(10000000000000000);
@@ -268,7 +268,7 @@ async function confirm_create(){
   const abiInstance = ABI.abi;
   const contract = new web3.eth.Contract(
                                     abiInstance,
-                     "0xd724613c90224c502D4b2cD5742F56681039edaB");
+                     "0xaAAcF0A44cfe45ad7eE80a39597A98184D611b62");
 
   const myAddress = localStorage.getItem("acc");
   if (myAddress == null){
@@ -299,9 +299,10 @@ async function load_capsules(){
   const abiInstance = ABI.abi;
   const contract = new web3.eth.Contract(
                                     abiInstance,
-                     "0xd724613c90224c502D4b2cD5742F56681039edaB");
+                     "0xaAAcF0A44cfe45ad7eE80a39597A98184D611b62");
 
   const myAddress = localStorage.getItem("acc");
+  console.log(myAddress);
   var arr = [];
 
   try {
@@ -369,7 +370,7 @@ async function sort_capsules_amt(){
   const abiInstance = ABI.abi;
   const contract = new web3.eth.Contract(
                                     abiInstance,
-                     "0xd724613c90224c502D4b2cD5742F56681039edaB");
+                     "0xaAAcF0A44cfe45ad7eE80a39597A98184D611b62");
 
   const myAddress = localStorage.getItem("acc");
   var arr = [];
@@ -445,7 +446,7 @@ async function sort_capsules_mat(){
   const abiInstance = ABI.abi;
   const contract = new web3.eth.Contract(
                                     abiInstance,
-                     "0xd724613c90224c502D4b2cD5742F56681039edaB");
+                     "0xaAAcF0A44cfe45ad7eE80a39597A98184D611b62");
 
   const myAddress = localStorage.getItem("acc");
   var arr = [];
@@ -520,7 +521,7 @@ window.sort_capsules_mat = sort_capsules_mat;
 async function fetchAbi(){
   const base_url = "https://coston2-explorer.flare.network/api";
   const params =
-    "?module=contract&action=getabi&address=0x24A99A6dcFC3332443037C5a09505731312fD154";
+    "?module=contract&action=getabi&address=0xaAAcF0A44cfe45ad7eE80a39597A98184D611b62";
   const response = await fetch(base_url + params);
   const abi = JSON.parse((await response.json())["result"]);
   return abi;
